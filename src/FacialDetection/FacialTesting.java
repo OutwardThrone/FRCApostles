@@ -59,8 +59,11 @@ public class FacialTesting {
         Imgproc.equalizeHist(grayFrame, grayFrame);
         long absoluteFaceSize = Math.round(480*0.2);
         MatOfRect faces = new MatOfRect();
+        MatOfInt rlv = new MatOfInt();
+        MatOfDouble lvw = new MatOfDouble();
         CascadeClassifier cc = new CascadeClassifier("cascades\\haarcascade_frontalface_default.xml");
-        cc.detectMultiScale(grayFrame, faces, 1.1, 4, 0, new Size(absoluteFaceSize, absoluteFaceSize), new Size());
+        cc.detectMultiScale3(grayFrame, faces, rlv, lvw,1.1,1,0, new Size(absoluteFaceSize, absoluteFaceSize), new Size(), true);
+        System.out.println("Detection " + rlv.dump() + " with weight " + lvw.dump());
         Rect[] facesPlace = faces.toArray();
         ip.uploadRect(facesPlace);
     }
