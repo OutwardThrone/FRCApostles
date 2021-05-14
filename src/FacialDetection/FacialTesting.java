@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class FacialTesting {
@@ -62,8 +64,12 @@ public class FacialTesting {
         MatOfInt rlv = new MatOfInt();
         MatOfDouble lvw = new MatOfDouble();
         CascadeClassifier cc = new CascadeClassifier("cascades\\haarcascade_frontalface_default.xml");
-        cc.detectMultiScale3(grayFrame, faces, rlv, lvw,1.1,1,0, new Size(absoluteFaceSize, absoluteFaceSize), new Size(), true);
-        System.out.println("Detection " + rlv.dump() + " with weight " + lvw.dump());
+        cc.detectMultiScale3(grayFrame, faces, rlv, lvw, 1.1, 3, 0, new Size(absoluteFaceSize, absoluteFaceSize), new Size(), true);
+        for (int i = 0; i < lvw.rows(); i++) {
+            for (int j = 0; j < lvw.cols(); j++) {
+                ip.uploadConfidence(lvw.get(i,j));
+            }
+        }
         Rect[] facesPlace = faces.toArray();
         ip.uploadRect(facesPlace);
     }
