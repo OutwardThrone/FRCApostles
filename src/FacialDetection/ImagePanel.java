@@ -27,17 +27,15 @@ public class ImagePanel extends JPanel {
         super.paintComponent(g);
         g.drawImage(img,0,0, null);
         g.setColor(Color.CYAN);
+        Rect r = new Rect();
+        double d = 0;
         try {
-            for (int i = 0, j = 0; i < allR.length && j < conf.length; i++, j++) {
-                double d = conf[j];
-                Rect r = allR[i];
-                if(d > 1.5) {
-                    g.drawString("Confidence " + d, r.x, r.y + r.height + 10);
-                    g.drawRect(r.x, r.y, r.width, r.height);
-                }
+            for (int i = 0; i < allR.length; i++) {
+                r = allR[i];
+                g.drawRect(r.x, r.y, r.width, r.height);
+                d = conf[i];
+                g.drawString("Confidence " + String.format("%.2f", d), r.x, r.y + r.height + 10);
             }
-        } catch(NullPointerException npe) {
-            System.out.println("empty rect");
-        }
+        } catch(NullPointerException npe) { }
     }
 }

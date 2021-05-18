@@ -22,6 +22,10 @@ public class FacialTesting {
     private static Mat frame = new Mat();
     private static JFrame displayFrame = new JFrame();
     private static ImagePanel ip = new ImagePanel();
+
+    private static Rect[] facesPlace;
+    private static double[] conf;
+
     public static void main (String[] args) {
         capture.open(0);
 
@@ -54,7 +58,10 @@ public class FacialTesting {
             System.exit(0);
         }
     }
-
+    private static int debounceCounter = 0;
+    private static int debounceAmount = 10;
+    private static HashSet<double[]> summableConf = new HashSet<>();
+    private static int mostFaces = 0;
     private static void getFaces(Mat frame) {
         Mat grayFrame = new Mat();
         Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
@@ -65,13 +72,43 @@ public class FacialTesting {
         MatOfDouble lvw = new MatOfDouble();
         CascadeClassifier cc = new CascadeClassifier("cascades\\haarcascade_frontalface_default.xml");
         cc.detectMultiScale3(grayFrame, faces, rlv, lvw, 1.1, 3, 0, new Size(absoluteFaceSize, absoluteFaceSize), new Size(), true);
+        conf = new double[lvw.rows()];
         for (int i = 0; i < lvw.rows(); i++) {
             for (int j = 0; j < lvw.cols(); j++) {
-                ip.uploadConfidence(lvw.get(i,j));
+                conf[i] = lvw.get(i,j)[0];
+                ip.uploadConfidence(conf);
+                if(conf.length > mostFaces) {
+                    mostFaces = conf.length;
+                }
             }
         }
         Rect[] facesPlace = faces.toArray();
         ip.uploadRect(facesPlace);
+        if(debounceCounter < debounceAmount) {
+            summableConf.add(conf);
+            debounceCounter++;
+        } else {
+            //System.out.println("Most faces: " + mostFaces);
+            double[] finalConf = new double[mostFaces];
+            debounceCounter = 0;
+            for(double[] darr : summableConf) {
+                if(darr!=null && darr.length>0 && mostFaces>0) {
+                    for (int i = 0; i < darr.length; i++) {
+                        finalConf[i] += darr[i];
+                    }
+                }
+            }
+            for (int i = 0; i < finalConf.length; i++) {
+                finalConf[i] = finalConf[i]/debounceAmount;
+            }
+            summableConf.clear();
+            mostFaces = 0;
+            System.out.println(Arrays.toString(finalConf));
+            for(Rect r : facesPlace) {
+                System.out.print(r + ", ");
+            }
+            System.out.println();
+        }
     }
 
     private static void showWindow(Mat image, ImagePanel ip, File f) {
