@@ -71,6 +71,7 @@ public class FacialTesting {
         MatOfInt rlv = new MatOfInt();
         MatOfDouble lvw = new MatOfDouble();
         CascadeClassifier cc = new CascadeClassifier("cascades\\haarcascade_frontalface_default.xml");
+
         cc.detectMultiScale3(grayFrame, faces, rlv, lvw, 1.1, 3, 0, new Size(absoluteFaceSize, absoluteFaceSize), new Size(), true);
         conf = new double[lvw.rows()];
         for (int i = 0; i < lvw.rows(); i++) {
