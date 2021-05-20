@@ -1,4 +1,4 @@
-package Database;
+package UI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,6 @@ public class AppPanel extends JPanel {
     }
 
     private void init() {
-        databaseSetup();
 
         setFocusable(true);
         setLayout(new GridLayout(1, 1));
@@ -32,11 +31,6 @@ public class AppPanel extends JPanel {
         add(tabs);
 
         tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-    }
-
-    private ArrayList<String> members;
-    private void databaseSetup() {
-
     }
 
     private JComponent tuningPage() {

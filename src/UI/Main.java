@@ -1,4 +1,4 @@
-package Database;
+package UI;
 
 import javax.swing.*;
 
