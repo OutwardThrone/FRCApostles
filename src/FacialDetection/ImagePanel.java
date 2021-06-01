@@ -44,9 +44,17 @@ public class ImagePanel extends JPanel {
                 BufferedImage dst = new BufferedImage(r.width,r.height,BufferedImage.TYPE_INT_ARGB);
                 dst.getGraphics().drawImage(img, 0,0,r.width,r.height,r.x,r.y,r.x+r.width,r.y+r.height,null);
                 //the filepath that the saved face is stored to on the local drive
+                double scaleRatio = r.height/224;
+                int newWidth  = (int)(r.width/scaleRatio);
+                Image resizedImg = dst.getScaledInstance(224,newWidth, Image.SCALE_SMOOTH);
+                BufferedImage resizedBImg = new BufferedImage(224, newWidth,BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = resizedBImg.createGraphics();
+                g2d.drawImage(resizedImg,0,0,null);
+                g2d.dispose();
+
                 File f = new File("C:\\Users\\myPC\\Documents\\saved_face.jpg");
 
-                ImageIO.write(dst, "jpg", f);
+                ImageIO.write(resizedBImg, "jpg", f);
             }
         } catch(NullPointerException | IOException npe) { }
     }
