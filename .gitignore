@@ -1,4 +1,6 @@
 .idea
 FRCApostles.iml
 out
-sparta-bot-firebase-key.json
+sparta-bot-firebase.json
+node_modules
+package-lock.json
