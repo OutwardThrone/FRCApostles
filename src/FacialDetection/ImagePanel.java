@@ -13,6 +13,7 @@ public class ImagePanel extends JPanel {
     private Rect[] allR;
     private double[] conf;
 
+
     public void uploadImage(Image img) {
         this.img = img;
         this.repaint();
@@ -28,8 +29,9 @@ public class ImagePanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
+
         super.paintComponent(g);
-        g.drawImage(img,0,0, null);
+        g.drawImage(img, 0, 0, null);
         g.setColor(Color.CYAN);
         Rect r = new Rect();
         double d = 0;
@@ -41,21 +43,37 @@ public class ImagePanel extends JPanel {
                 g.drawString("Confidence " + String.format("%.2f", d), r.x, r.y + r.height + 10);
 
 
-                BufferedImage dst = new BufferedImage(r.width,r.height,BufferedImage.TYPE_INT_ARGB);
-                dst.getGraphics().drawImage(img, 0,0,r.width,r.height,r.x,r.y,r.x+r.width,r.y+r.height,null);
+                BufferedImage dst = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
+                dst.getGraphics().drawImage(img, 0, 0, r.width, r.height, r.x, r.y, r.x + r.width, r.y + r.height, null);
                 //the filepath that the saved face is stored to on the local drive
-                double scaleRatio = r.height/224;
-                int newWidth  = (int)(r.width/scaleRatio);
-                Image resizedImg = dst.getScaledInstance(224,newWidth, Image.SCALE_SMOOTH);
-                BufferedImage resizedBImg = new BufferedImage(224, newWidth,BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2d = resizedBImg.createGraphics();
-                g2d.drawImage(resizedImg,0,0,null);
-                g2d.dispose();
+                if (r.height > r.width) {
+                    double scaleRatio = 224.0 / r.height;
+                    int newWidth = (int) (r.width * scaleRatio);
+                    Image resizedImg = dst.getScaledInstance(newWidth, 224, Image.SCALE_SMOOTH);
+                    BufferedImage resizedBImg = new BufferedImage(newWidth, 224, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = resizedBImg.createGraphics();
+                    g2d.drawImage(resizedImg, 0, 0, null);
+                    g2d.dispose();
 
-                File f = new File("C:\\Users\\myPC\\Documents\\saved_face.jpg");
+                    File f = new File("C:\\Users\\myPC\\Documents\\saved_face_resized.jpg");
 
-                ImageIO.write(resizedBImg, "jpg", f);
+                    ImageIO.write(resizedBImg, "jpg", f);
+                }
+                else{
+                    double scaleRatio = 224.0 / r.width;
+                    int newHeight = (int) (r.height * scaleRatio);
+                    Image resizedImg = dst.getScaledInstance(224, newHeight, Image.SCALE_SMOOTH);
+                    BufferedImage resizedBImg = new BufferedImage(224, newHeight, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = resizedBImg.createGraphics();
+                    g2d.drawImage(resizedImg, 0, 0, null);
+                    g2d.dispose();
+
+                    File f = new File("C:\\Users\\myPC\\Downloads\\resized.jpg");
+
+                    ImageIO.write(resizedBImg, "jpg", f);
+                }
             }
-        } catch(NullPointerException | IOException npe) { }
+        } catch (NullPointerException | IOException npe) {
+        }
     }
 }
